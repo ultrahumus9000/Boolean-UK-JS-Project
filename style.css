@@ -141,17 +141,14 @@ header h1 {
   margin: 0px 10px 0px 10px;
 }
 
-
-.main-render-section {
-
-}
-
-.journaUlList{
+.journal-Ul-List{
   display: grid;
   grid-template-columns: repeat(auto-fit, 300px);
   background-color: #00808040;
   gap: 20px;
   padding: 20px;
+  background-color: #ffebcd90;
+
 }
 .journallist {
   list-style: none;
@@ -200,6 +197,12 @@ header h1 {
   background-color: #ff634720;
   padding: 5px;
 }
+.journalContent form{
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+}
+
 .filmDescription {
   background-color: #d8bfd850;
   padding: 5px;
@@ -232,4 +235,20 @@ header h1 {
   filter: brightness(1.5);
   transition: 0.2s;
   transform: scale(1.05);
+}
+.edit_submitBTn{
+  background-color: darkcyan;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 5px;
+  color: aliceblue;
+  margin-left: 10px;
+}
+.clear_btn{
+  background-color: lightpink;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 5px;
+  color: black;
+  margin-left: 10px;
 }

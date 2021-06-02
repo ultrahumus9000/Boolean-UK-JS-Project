@@ -9,7 +9,8 @@ const headerEl = document.querySelector("header");
 const asideEl = document.querySelector(".aside");
 const mainEl = document.querySelector(".main");
 const mainRenderSection = document.querySelector(".mainrendersection");
-const journaUlList = document.querySelector(".journalUlList");
+const journaUlList = document.querySelector(".journal-Ul-List");
+const checkboxSection = document.querySelector(".checkbox-section");
 //STATE:
 let state = {
   users: [
@@ -22,23 +23,7 @@ let state = {
       name: "Linlin",
     },
   ],
-  posts: [
-    {
-      id: 1,
-      userId: 1,
-      postTitle: "",
-      image: "",
-      genre: "",
-      comment: "",
-      rating: 0, // 3/5 star star star,
-      animeInfo: {
-        title: "",
-        originalTitle: "",
-        director: "",
-        description: "",
-      },
-    },
-  ],
+  posts: [],
 
   niceFilmsFromAPI: [],
 
@@ -46,12 +31,13 @@ let state = {
     id: "",
     name: "",
   },
+  checkedGenre: [],
 };
-
-render();
+renderCheckbox();
+renderAside();
 
 //RENDER FUNCTION:
-function render() {
+function renderAside() {
   //users section
   getUserInfo().then(function (accounts) {
     console.log(`fetch users: `, accounts);
@@ -99,14 +85,25 @@ function transformUglyFilmAPI(uglyFilmAPI) {
 
 function postToServer(post) {
   return fetch("http://localhost:3000/posts", {
-    method: "PATCH",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(post),
   }).then(function (resp) {
-    console.log(resp);
     return resp.json();
   });
 }
+
+function getPostsFromServer() {
+  return fetch("http://localhost:3000/posts").then(function (resp) {
+    return resp.json();
+  });
+}
+
+getPostsFromServer().then(function (posts) {
+  state.posts = posts;
+  console.log(state.posts);
+  renderCards(posts);
+});
 
 //ASIDE FORM FUNCTION:
 function createForm(films) {
@@ -217,7 +214,7 @@ function createForm(films) {
     );
 
     let newPost = {
-      id: foundFilm.id,
+      orginalId: foundFilm.id,
       userId: "", //we need to figure our how to make this the selected User Id
       image: imageInput.value,
       genre: genreSelectEl.value,
@@ -230,9 +227,13 @@ function createForm(films) {
         description: foundFilm.description,
       },
     };
-
-    postToServer(newPost).then(function () {
-      renderCard(newPost);
+    console.log(newPost);
+    postToServer(newPost).then(function (postFromServer) {
+      state.posts.push(postFromServer);
+      console.log(postFromServer);
+      // renderCard(newPost);
+      renderCards(state.posts);
+      formEl.reset();
     });
   });
 
@@ -272,6 +273,7 @@ function createForm(films) {
 // use filter to find the data we look for
 
 function renderCards(posts) {
+  journaUlList.innerHTML = "";
   posts.map(renderCard);
 }
 
@@ -300,7 +302,6 @@ function renderCard(post) {
   let ratingScore = document.createElement("p");
 
   ratingScore.className = "ratingScore";
-  //need to change
   ratingScore.innerText = `Rating: ${post.rating} `;
 
   let svgel = document.createElement("img");
@@ -312,7 +313,7 @@ function renderCard(post) {
 
     ratingScore.append(svgel);
   }
-  //need to change
+
   let genre = document.createElement("span");
   genre.innerText = post.genre;
 
@@ -325,10 +326,24 @@ function renderCard(post) {
   deleteBTn.className = "deleteBTn";
   deleteBTn.innerText = "DELETE";
 
-  //todo delete the post to the server then update the state then rendercards
+  deleteBTn.addEventListener("click", function () {
+    deleteDatatoServer(post).then(function () {
+      let filteredPosts = state.posts.filter(function (targetPost) {
+        return targetPost.id !== post.id;
+      });
+      state.posts = filteredPosts;
+      renderCards(state.posts);
+    });
+  });
 
   let editBTn = document.createElement("button");
   editBTn.innerText = "Edit";
+
+  editBTn.addEventListener("click", function () {
+    let editForm = createEditForm(post);
+    journalContent.innerHTML = "";
+    journalContent.append(editForm);
+  });
 
   journalBtns.append(editBTn, deleteBTn);
   //todo create a form to edit then update to server then update to the state then rendercards
@@ -350,9 +365,7 @@ function renderCard(post) {
   filmDescription.innerText = "Description: ";
 
   let spanDescription = document.createElement("span");
-  // change
   spanDescription.innerText = post.animeInfo.description;
-  // change
 
   filmDescription.append(spanDescription);
 
@@ -395,8 +408,91 @@ function createUserAccount(name) {
 
 function createEditForm(post) {
   let editForm = document.createElement("form");
-  let contentInput = document.createComment("input");
+  let contentInput = document.createElement("textarea");
   contentInput.setAttribute("type", "text");
-  contentInput.innerText = post.comment;
+  contentInput.setAttribute("rows", "3");
+  contentInput.value = post.content;
   let submitBtn = document.createElement("button");
+  submitBtn.innerText = "Submit";
+  submitBtn.className = "edit_submitBTn";
+  editForm.append(contentInput, submitBtn);
+  return editForm;
 }
+
+function deleteDatatoServer(post) {
+  let deletePost = state.posts.find(function (targetPost) {
+    return targetPost.id === post.id;
+  });
+  let deleteID = deletePost.id;
+  return fetch(`http://localhost:3000/posts/${deleteID}`, {
+    method: "DELETE",
+  });
+}
+
+function renderCheckedGenreList() {
+  let genreArray = state.checkedGenre.map(function (checkGenre) {
+    return checkGenre.toLowerCase();
+  });
+  console.log(genreArray);
+  let filteredPosts = state.posts.filter(function (targetPost) {
+    return genreArray.includes(targetPost.genre);
+  });
+  renderCards(filteredPosts);
+}
+
+function renderCheckbox() {
+  let checkboxValueArray = ["Action", "Romamce", "Comedy", "Magic"];
+  checkboxValueArray.forEach(function (value) {
+    let checkboxLabel = document.createElement("label");
+    checkboxLabel.innerText = ` ${value}`;
+    let checkboxInput = document.createElement("input");
+    checkboxInput.className = "checkbox";
+    checkboxInput.setAttribute("type", "checkbox");
+    checkboxInput.setAttribute("value", value);
+    checkboxLabel.prepend(checkboxInput);
+    checkboxSection.append(checkboxLabel);
+
+    checkboxInput.addEventListener("click", function () {
+      if (checkboxInput.checked) {
+        state.checkedGenre.push(checkboxInput.value);
+        // console.log(state.checkedGenre);
+        renderCheckedGenreList();
+      } else {
+        let uncheckedGenre = checkboxInput.value;
+        state.checkedGenre = state.checkedGenre.filter(function (targetGenre) {
+          return targetGenre !== uncheckedGenre;
+        });
+        // console.log(state.checkedGenre);
+        state.genre = [];
+        renderCheckedGenreList();
+        let checkNodelists = document.querySelectorAll(".checkbox");
+        let checkStatusArray = [];
+
+        for (const checkboxInList of checkNodelists) {
+          checkStatusArray.push(checkboxInList.checked);
+        }
+
+        // console.log(checkStatusArray);
+        if (!checkStatusArray.includes(true)) {
+          renderCards(state.posts);
+        }
+      }
+    });
+  });
+  let clearAllBtn = document.createElement("button");
+  clearAllBtn.className = "clear_btn";
+  clearAllBtn.innerText = "Reset All";
+
+  checkboxSection.append(clearAllBtn);
+
+  let checkNodelists = document.querySelectorAll(".checkbox");
+
+  clearAllBtn.addEventListener("click", function () {
+    for (const checkboxInList of checkNodelists) {
+      checkboxInList.checked = false;
+    }
+    renderCards(state.posts);
+  });
+}
+
+function filterGenre() {}
