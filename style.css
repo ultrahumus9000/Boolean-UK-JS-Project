@@ -1,0 +1,235 @@
+* {
+  font-family: sans-serif;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+html {
+  --primary-teal: teal;
+  --primary-teal-half-transparent: #40e0d080;
+  --primary-teal-full-transparent: #00808020;
+  --primary-light-cyan: lightcyan;
+
+  --secondary-salmon: lightsalmon;
+
+  --white-lavander: lavender; 
+}
+
+body {
+  background-image: url(https://www.kolpaper.com/wp-content/uploads/2021/03/HD-Spirited-Away-Wallpaper.jpg);
+  overflow: scroll;
+  background-size: cover;
+
+  display: grid;
+  grid-template:
+    "header header" auto
+    "aside main" 1fr/
+    1fr 2fr;
+    gap: 10px;
+}
+
+/* HEADER SECTION  */
+header {
+  grid-area: header;
+
+  display: grid;
+  grid-template-columns: 80% 10% 10%;
+  padding: 20px;
+  justify-items: center;
+  background-color: var(--primary-teal-full-transparent);
+  gap: 10px;
+}
+
+header h1 {
+  color: var(--white-lavander);
+  text-shadow: 3px 2px 2px black;
+}
+
+/* users  */
+.user-div {
+  color: var(--white-lavander);
+  width: 130px;
+  border-radius: 15px;
+  padding: 10px 20px;
+  background-color: var(--primary-teal);
+  display: grid;
+  justify-content: center;
+}
+
+.user-div span {
+  font-size: larger;
+}
+
+
+
+/* MAIN SECTION */
+.main {
+  grid-area: main;
+  border: 2px solid rgb(243, 239, 9); /*to be DELETED AFTER APP WORKS*/
+}
+
+/* ASIDE SECTION */
+.aside {
+  grid-area: aside;
+  /* border: 2px solid var(--primary-teal); */
+}
+
+/* FORM  */
+.form {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 3px solid var(--white-lavander);
+  border-radius: 10px;
+  shado
+}
+
+.form-title {
+  color: var(--white-lavander);
+  text-shadow: 3px 2px 2px black;
+  padding-bottom: 10px;
+}
+
+.genre-title {
+  color: var(--white-lavander);
+  text-shadow: 3px 2px 2px black;
+}
+
+.form-image {
+  color: var(--white-lavander);
+  text-shadow: 3px 2px 2px black;
+}
+
+.pick-a-title {
+  color: var(--white-lavander);
+  text-shadow: 3px 2px 2px black;
+}
+
+.form-comment {
+  color: var(--white-lavander);
+  text-shadow: 3px 2px 2px black;
+}
+
+.form-btn {
+  border: 3px solid var(--primary-teal);
+  border-radius: 5px;
+  background-color: var(--secondary-salmon);
+  color: var(--primary-teal);
+  font-weight: 600;
+  padding: 10px;
+}
+
+/* checkboxes  */
+.checkbox-div {
+  background-color: var(--primary-teal-half-transparent);
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 25% 75%;
+  align-items: center;
+  color: var(--primary-light-cyan);
+}
+
+.checkbox-div p {
+  border: dashed 2px var(--primary-light-cyan);
+  padding: 5px;
+  text-align: center;
+  background-color: var(--secondary-salmon);
+}
+
+.checkbox-div label {
+  margin: 0px 10px 0px 10px;
+}
+
+
+.main-render-section {
+
+}
+
+.journaUlList{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 300px);
+  background-color: #00808040;
+  gap: 20px;
+  padding: 20px;
+}
+.journallist {
+  list-style: none;
+  width: 300px;
+  height: 500px;
+  background-color: whitesmoke;
+  padding: 20px;
+  border-radius: 20px;
+  overflow: scroll;
+  display: grid;
+  gap: 10px;
+}
+
+.ratediv {
+  background-color: #e6e6fa90;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  height: 40px;
+  color: azure;
+  padding: 0px 20px;
+  color: teal;
+}
+.ratingScore {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+}
+.ratediv span {
+  font-weight: bolder;
+  font-size: larger;
+}
+.filmpicture {
+  width: 260px;
+  height: 180px;
+  object-fit: cover;
+}
+.ratingstar {
+  width: 35px;
+  height: 35px;
+}
+.titleofjournal {
+  color: coral;
+}
+.journalContent {
+  background-color: #ff634720;
+  padding: 5px;
+}
+.filmDescription {
+  background-color: #d8bfd850;
+  padding: 5px;
+  height: 60px;
+  overflow: scroll;
+  color: tomato;
+  font-weight: bolder;
+}
+.filmDescription span {
+  color: black;
+  font-weight: lighter;
+}
+.buttonsection {
+  display: grid;
+  grid-template-columns: 44% 44%;
+  gap: 30px;
+}
+.buttonsection button {
+  background-color: slateblue;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 5px;
+  color: aliceblue;
+}
+.buttonsection .deleteBTn {
+  background-color: tomato;
+}
+
+.buttonsection button:hover {
+  filter: brightness(1.5);
+  transition: 0.2s;
+  transform: scale(1.05);
+}
