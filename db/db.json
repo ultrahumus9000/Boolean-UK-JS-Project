@@ -11,27 +11,29 @@
   ],
   "posts": [
     {
-      "orginalId": "12cfb892-aac0-4c5b-94af-521852e46d6a",
-      "userId": "",
+      "orginalId": "2baf70d1-42bb-4437-b551-e5fed5a87abe",
+      "userId": 1,
+      "userName": "Valentina",
       "image": "https://images2.alphacoders.com/103/thumb-350-1031480.jpg",
-      "genre": "action",
-      "content": "123",
-      "rating": 4,
+      "genre": "Romance",
+      "content": "ashahshsasdhsddsbbdf",
+      "rating": "1",
       "animeInfo": {
-        "title": "Grave of the Fireflies",
-        "originalTitle": "火垂るの墓",
-        "director": "Isao Takahata",
-        "description": "In the latter part of World War II, a boy and his sister, orphaned when their mother is killed in the firebombing of Tokyo, are left to survive on their own in what remains of civilian life in Japan. The plot follows this boy and his sister as they do their best to survive in the Japanese countryside, battling hunger, prejudice, and pride in their own quiet, personal battle."
+        "title": "Castle in the Sky",
+        "originalTitle": "天空の城ラピュタ",
+        "director": "Hayao Miyazaki",
+        "description": "The orphan Sheeta inherited a mysterious crystal that links her to the mythical sky-kingdom of Laputa. With the help of resourceful Pazu and a rollicking band of sky pirates, she makes her way to the ruins of the once-great civilization. Sheeta and Pazu must outwit the evil Muska, who plans to use Laputa's science to make himself ruler of the world."
       },
       "id": 1
     },
     {
       "orginalId": "2baf70d1-42bb-4437-b551-e5fed5a87abe",
-      "userId": "",
+      "userId": 2,
+      "userName": "Linlin",
       "image": "https://images2.alphacoders.com/103/thumb-350-1031480.jpg",
-      "genre": "comedy",
-      "content": "123",
-      "rating": 4,
+      "genre": "Romance",
+      "content": "my feeling ",
+      "rating": "4",
       "animeInfo": {
         "title": "Castle in the Sky",
         "originalTitle": "天空の城ラピュタ",
