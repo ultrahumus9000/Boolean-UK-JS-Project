@@ -11,6 +11,9 @@ const mainEl = document.querySelector(".main");
 const mainRenderSection = document.querySelector(".mainrendersection");
 const journaUlList = document.querySelector(".journal-Ul-List");
 const checkboxSection = document.querySelector(".checkbox-section");
+const accountDivision = document.querySelector(".user-accounts");
+console.log(accountDivision);
+
 //STATE:
 let state = {
   users: [
@@ -28,8 +31,8 @@ let state = {
   niceFilmsFromAPI: [],
 
   activeUser: {
-    id: "",
-    name: "",
+    id: null,
+    name: null,
   },
   checkedGenre: [],
 };
@@ -41,7 +44,7 @@ function renderAside() {
   //users section
   getUserInfo().then(function (accounts) {
     console.log(`fetch users: `, accounts);
-    renderUserAccount(accounts);
+    renderUserAccounts(accounts);
   });
 
   //films-form section
@@ -110,7 +113,7 @@ function createForm(films) {
   //FORM TITLE:
   let formTitle = document.createElement(`h2`);
   formTitle.setAttribute(`class`, `form-title`);
-  formTitle.innerText = "Create your journal entry:";
+  formTitle.innerText = "Create Your Own Journal:";
 
   //FORM:
   let formEl = document.createElement(`form`);
@@ -151,21 +154,14 @@ function createForm(films) {
   genreSelectEl.setAttribute(`name`, `genre`);
   genreSelectEl.setAttribute(`id`, `genre`);
 
-  let genreRomanceOption = document.createElement(`option`);
-  genreRomanceOption.setAttribute(`value`, `romance`);
-  genreRomanceOption.innerText = "Romance";
+  let genreArray = [`Romance`, `Action`, `Comedy`, `Magic`];
 
-  let genreActionOption = document.createElement(`option`);
-  genreActionOption.setAttribute(`value`, `action`);
-  genreActionOption.innerText = "Action";
-
-  let genreComedyOption = document.createElement(`option`);
-  genreComedyOption.setAttribute(`value`, `comedy`);
-  genreComedyOption.innerText = "Comedy";
-
-  let genreMagicOption = document.createElement(`option`);
-  genreMagicOption.setAttribute(`value`, `magic`);
-  genreMagicOption.innerText = "Magic";
+  genreArray.map(function (selectedGenre) {
+    let genreRomanceOption = document.createElement(`option`);
+    genreRomanceOption.setAttribute(`value`, selectedGenre);
+    genreRomanceOption.innerText = selectedGenre;
+    genreSelectEl.append(genreRomanceOption);
+  });
 
   //IMAGE:
   let imageLabel = document.createElement(`label`);
@@ -182,19 +178,40 @@ function createForm(films) {
   imageInput.required = true;
   imageInput.setAttribute(`placeholder`, `Image URL`);
 
+  //rating
+  let ratingLabel = document.createElement(`label`);
+  ratingLabel.className = "rating-lable";
+
+  ratingLabel.innerText = "Rate a Score: ";
+
+  let ratingSelectEl = document.createElement(`select`);
+  ratingSelectEl.setAttribute(`name`, `rating`);
+  ratingSelectEl.setAttribute(`class`, `ratinng`);
+
+  let ratingArray = [1, 2, 3, 4, 5];
+
+  ratingArray.forEach(function (score) {
+    let scoreOption = document.createElement("option");
+    scoreOption.setAttribute(`value`, score);
+    scoreOption.innerText = score;
+
+    ratingSelectEl.append(scoreOption);
+  });
+  ratingLabel.append(ratingSelectEl);
+
   //CONTENT:
   let labelComment = document.createElement(`label`);
   labelComment.setAttribute(`class`, `form-comment`);
   labelComment.setAttribute(`for`, `form-comment`);
   let labelCommentH3 = document.createElement(`h3`);
   labelCommentH3.setAttribute(`class`, `form-comment`);
-  labelCommentH3.innerText = "Comment:";
+  labelCommentH3.innerText = "Body:";
 
   let inputComment = document.createElement(`textarea`);
   inputComment.setAttribute(`id`, `form-comment`);
   inputComment.setAttribute(`name`, `form-comment`);
   inputComment.setAttribute(`type`, `text`);
-  inputComment.setAttribute(`placeholder`, `write comment here..`);
+  inputComment.setAttribute(`placeholder`, `write content here..`);
   inputComment.setAttribute(`rows`, `4`);
   inputComment.setAttribute(`cols`, `20`);
   inputComment.required = true;
@@ -208,6 +225,10 @@ function createForm(films) {
 
   formEl.addEventListener(`submit`, function (e) {
     e.preventDefault();
+    if (state.activeUser.id === null) {
+      alert("Sign in First");
+      return;
+    }
 
     let foundFilm = state.niceFilmsFromAPI.find(
       (film) => film.title === filmTitleSelectEl.value
@@ -215,11 +236,12 @@ function createForm(films) {
 
     let newPost = {
       orginalId: foundFilm.id,
-      userId: "", //we need to figure our how to make this the selected User Id
+      userId: state.activeUser.id,
+      userName: state.activeUser.name,
       image: imageInput.value,
       genre: genreSelectEl.value,
       content: inputComment.value,
-      rating: 4,
+      rating: ratingSelectEl.value,
       animeInfo: {
         title: foundFilm.title,
         originalTitle: foundFilm.originalTitle,
@@ -240,16 +262,12 @@ function createForm(films) {
   filmTitleLabelEl.append(filmTitleLabelH3);
 
   genreLabel.append(genreLabelH3);
-  genreSelectEl.append(
-    genreRomanceOption,
-    genreActionOption,
-    genreComedyOption,
-    genreMagicOption
-  );
+
   labelComment.append(labelCommentH3);
   imageLabel.append(imageLabelH3);
 
   formEl.append(
+    formTitle,
     filmTitleLabelEl,
     filmTitleSelectEl,
     genreLabel,
@@ -258,12 +276,14 @@ function createForm(films) {
     imageLabel,
     imageInput,
 
+    ratingLabel,
+
     labelCommentH3,
     inputComment,
 
     formBtn
   );
-  asideEl.append(formTitle, formEl);
+  asideEl.append(formEl);
 }
 
 // form(data from server) inside the form we can get the nicefilmapi, genre, title, etc then post to server/ state.posts/ then renderposts
@@ -283,6 +303,29 @@ function renderCard(post) {
   let journalList = document.createElement("li");
   journalList.className = "journallist";
 
+  let userDiv = document.createElement("div");
+  userDiv.className = "account-div";
+
+  let userProfile = document.createElement("img");
+  userProfile.className = "user-profile";
+
+  let userName = document.createElement("span");
+  userName.innerText = post.userName;
+
+  if (post.userId === 1) {
+    userProfile.setAttribute(
+      "src",
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+    );
+  } else {
+    userProfile.setAttribute(
+      "src",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBn75PNFGZU7zbLgyVsUhlDEWyBQxLea3GCA&usqp=CAU"
+    );
+  }
+
+  userDiv.append(userProfile, userName);
+
   let journalReviewTitle = document.createElement("h3");
   journalReviewTitle.innerText = `Review of `;
 
@@ -299,10 +342,21 @@ function renderCard(post) {
   let ratingSection = document.createElement("div");
   ratingSection.className = "ratediv";
 
-  let ratingScore = document.createElement("p");
+  let ratingPara = document.createElement("p");
 
-  ratingScore.className = "ratingScore";
-  ratingScore.innerText = `Rating: ${post.rating} `;
+  ratingPara.className = "ratingPara";
+  ratingPara.innerText = `Rating:  `;
+
+  let ratingScore = document.createElement("span");
+  ratingScore.className = "ratingscore";
+
+  ratingScore.innerText = `${post.rating} `;
+
+  if (ratingScore.innerText >= 3) {
+    ratingScore.className = "high-rating-score";
+  }
+
+  ratingPara.append(ratingScore);
 
   let svgel = document.createElement("img");
   svgel.setAttribute("class", "ratingstar");
@@ -311,13 +365,14 @@ function renderCard(post) {
   if (post.rating >= 3) {
     svgel.setAttribute("src", "image/rate.svg");
 
-    ratingScore.append(svgel);
+    ratingPara.append(svgel);
   }
 
   let genre = document.createElement("span");
+  genre.className = "ratingGenre";
   genre.innerText = post.genre;
 
-  ratingSection.append(ratingScore, genre);
+  ratingSection.append(ratingPara, genre);
 
   let journalBtns = document.createElement("div");
   journalBtns.className = "buttonsection";
@@ -340,6 +395,16 @@ function renderCard(post) {
   editBTn.innerText = "Edit";
 
   editBTn.addEventListener("click", function () {
+    if (state.activeUser.id == null) {
+      alert("Sign in First");
+      return;
+    }
+
+    if (state.activeUser.id !== post.userId) {
+      alert("you are not the creator");
+      return;
+    }
+
     let editForm = createEditForm(post);
     journalContent.innerHTML = "";
     journalContent.append(editForm);
@@ -370,6 +435,7 @@ function renderCard(post) {
   filmDescription.append(spanDescription);
 
   journalList.append(
+    userDiv,
     journalReviewTitle,
     ratingSection,
     journalContent,
@@ -389,34 +455,125 @@ function getUserInfo() {
 }
 
 //USERS ACCOUNT FUNCTIONS:
-function renderUserAccount(accounts) {
-  accounts.map(function (account) {
-    createUserAccount(account.name);
+function renderUserAccounts(accounts) {
+  accountDivision.innerHTML = "";
+  accounts.forEach(function (account) {
+    let userAccountdivEl = createUserAccount(account);
+    accountDivision.append(userAccountdivEl);
   });
 }
 
-function createUserAccount(name) {
+function createUserAccount(account) {
   let userAccountdivEl = document.createElement("div");
   userAccountdivEl.className = "user-div";
 
+  if (state.activeUser.name === account.name) {
+    userAccountdivEl.classList.add("active-user");
+  }
+
   let userSpanName = document.createElement("span");
-  userSpanName.innerText = name;
+  userSpanName.innerText = account.name;
 
   userAccountdivEl.append(userSpanName);
-  headerEl.append(userAccountdivEl);
+
+  userAccountdivEl.addEventListener("click", function () {
+    let editForm = document.querySelector(".edit-form");
+    if (state.activeUser.id === account.id) {
+      state.activeUser = {
+        id: null,
+        name: null,
+      };
+      // userAccountdivEl.classList.remove("active-user");
+      renderCards(state.posts);
+      console.log("You just signed off");
+      renderUserAccounts(state.users);
+      return;
+    }
+
+    state.activeUser = account;
+
+    renderUserAccounts(state.users);
+
+    if (editForm !== null) {
+      renderCards(state.posts);
+      return;
+    }
+
+    renderCards(state.posts);
+    console.log(state.activeUser);
+  });
+  return userAccountdivEl;
 }
 
 function createEditForm(post) {
   let editForm = document.createElement("form");
+  editForm.className = "edit-form";
   let contentInput = document.createElement("textarea");
   contentInput.setAttribute("type", "text");
+  contentInput.setAttribute("name", "contentEdit");
   contentInput.setAttribute("rows", "3");
+  contentInput.setAttribute("class", "content-edit ");
   contentInput.value = post.content;
+
   let submitBtn = document.createElement("button");
   submitBtn.innerText = "Submit";
   submitBtn.className = "edit_submitBTn";
-  editForm.append(contentInput, submitBtn);
+
+  let discardBtn = document.createElement("button");
+  discardBtn.innerText = "Discard";
+  discardBtn.className = "discard_submitBTn";
+
+  editForm.append(contentInput, submitBtn, discardBtn);
+
+  discardBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    editForm.remove();
+    renderCards(state.posts);
+  });
+
+  editForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    // console.log(editForm.contentEdit.value);
+    if (contentInput.value === null) {
+      alert(
+        "content can not be empty, please choose discard or delete your journal"
+      );
+    }
+
+    if (state.activeUser.id !== post.userId) {
+      editForm.remove();
+      alert("you are not the creator");
+      return;
+    }
+    updateContentToServer(editForm, post).then(function (
+      updatedPostFromServer
+    ) {
+      let updatePostToStateIndex = state.posts.findIndex(function (targetPost) {
+        return targetPost.id === updatedPostFromServer.id;
+      });
+
+      state.posts[updatePostToStateIndex] = updatedPostFromServer;
+      renderCards(state.posts);
+      editForm.remove();
+    });
+  });
   return editForm;
+}
+
+function updateContentToServer(form, post) {
+  let updatePost = state.posts.find(function (targetPost) {
+    return targetPost.id === post.id;
+  });
+  let updateID = updatePost.id;
+  return fetch(`http://localhost:3000/posts/${updateID}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: form.contentEdit.value,
+    }),
+  }).then(function (resp) {
+    return resp.json();
+  });
 }
 
 function deleteDatatoServer(post) {
@@ -431,17 +588,19 @@ function deleteDatatoServer(post) {
 
 function renderCheckedGenreList() {
   let genreArray = state.checkedGenre.map(function (checkGenre) {
-    return checkGenre.toLowerCase();
+    return checkGenre;
   });
   console.log(genreArray);
   let filteredPosts = state.posts.filter(function (targetPost) {
     return genreArray.includes(targetPost.genre);
   });
+  console.log(state);
+  console.log(filteredPosts);
   renderCards(filteredPosts);
 }
 
 function renderCheckbox() {
-  let checkboxValueArray = ["Action", "Romamce", "Comedy", "Magic"];
+  let checkboxValueArray = ["Action", "Romance", "Comedy", "Magic"];
   checkboxValueArray.forEach(function (value) {
     let checkboxLabel = document.createElement("label");
     checkboxLabel.innerText = ` ${value}`;
@@ -494,5 +653,3 @@ function renderCheckbox() {
     renderCards(state.posts);
   });
 }
-
-function filterGenre() {}
