@@ -8,7 +8,7 @@
 const headerEl = document.querySelector("header");
 const asideEl = document.querySelector(".aside");
 const mainEl = document.querySelector(".main");
-const mainRenderSection = document.querySelector(".mainrendersection");
+const mainRenderSection = document.querySelector(".main-render-section");
 const journaUlList = document.querySelector(".journal-Ul-List");
 const checkboxSection = document.querySelector(".checkbox-section");
 const accountDivision = document.querySelector(".user-accounts");
@@ -16,25 +16,16 @@ console.log(accountDivision);
 
 //STATE:
 let state = {
-  users: [
-    {
-      id: 1,
-      name: "Valentina",
-    },
-    {
-      id: 2,
-      name: "Linlin",
-    },
-  ],
+  users: [],
   posts: [],
-
+  people: [],
   niceFilmsFromAPI: [],
-
   activeUser: {
     id: null,
     name: null,
   },
   checkedGenre: [],
+  currentMainCharactors: [],
 };
 renderCheckbox();
 renderAside();
@@ -44,6 +35,7 @@ function renderAside() {
   //users section
   getUserInfo().then(function (accounts) {
     console.log(`fetch users: `, accounts);
+    state.users = accounts;
     renderUserAccounts(accounts);
   });
 
@@ -81,6 +73,7 @@ function transformUglyFilmAPI(uglyFilmAPI) {
     releaseDate: uglyFilmAPI.release_date,
     description: uglyFilmAPI.description,
     director: uglyFilmAPI.director,
+    people: uglyFilmAPI.people[0],
   };
 
   return nicelyTransformedFilm;
@@ -242,6 +235,7 @@ function createForm(films) {
       genre: genreSelectEl.value,
       content: inputComment.value,
       rating: ratingSelectEl.value,
+      peopleUrl: foundFilm.people,
       animeInfo: {
         title: foundFilm.title,
         originalTitle: foundFilm.originalTitle,
@@ -434,6 +428,46 @@ function renderCard(post) {
 
   filmDescription.append(spanDescription);
 
+  let readMoreBtn = document.createElement("button");
+  readMoreBtn.className = "read-more-button";
+  readMoreBtn.innerText = "Main Charactors";
+
+  readMoreBtn.addEventListener("click", () => {
+    getCharactorsInfo(post).then((allPeopleFromServer) => {
+      state.people = allPeopleFromServer;
+      console.log(state.people);
+      let filteredPeople = state.people.filter((peopleFromState) => {
+        return peopleFromState.films[0].includes(post.orginalId);
+      });
+
+      if (filteredPeople.length >= 4) {
+        filteredPeople = filteredPeople.slice(0, 4);
+      }
+      state.currentMainCharactors = filteredPeople;
+
+      if (state.currentMainCharactors.length === 0) {
+        alert("No available data from API");
+        return;
+      }
+
+      let imageSource = [
+        "image/onlyyesterday.jpeg",
+        "image/onlyyesterdaytwo.jpeg",
+        "image/pompoko.jpeg",
+        "image/spiritedAway.jpeg",
+      ];
+      console.log(state.currentMainCharactors);
+      let mainCharactorsDiv = renderProfile(imageSource);
+
+      let myModal = document.createElement("div");
+      myModal.className = "my-modal";
+      myModal.append(mainCharactorsDiv);
+      console.log(myModal);
+      console.log(mainRenderSection);
+      mainRenderSection.append(myModal);
+    });
+  });
+
   journalList.append(
     userDiv,
     journalReviewTitle,
@@ -441,11 +475,66 @@ function renderCard(post) {
     journalContent,
     journalBtns,
     filmPicture,
-    filmDescription
+    filmDescription,
+    readMoreBtn
   );
 
   journaUlList.append(journalList);
 }
+
+//render charactors
+function renderProfile(imageSource) {
+  let mainCharactorsDiv = document.createElement("div");
+  mainCharactorsDiv.className = "main-charactor-div";
+
+  for (let i = 0; i < state.currentMainCharactors.length; i++) {
+    let charactorDiv = document.createElement("div");
+    charactorDiv.className = "charactor-div";
+
+    let charactorProfile = document.createElement("img");
+    charactorProfile.className = "charactor-profile";
+    charactorProfile.setAttribute("src", imageSource[i]);
+
+    let charactorDetails = {
+      Name: state.currentMainCharactors[i].name,
+      Gender: state.currentMainCharactors[i].gender,
+      Age: state.currentMainCharactors[i].age,
+    };
+
+    let charactorDetailsDiv = document.createElement("div");
+    charactorDetailsDiv.className = "charactor-details-div";
+
+    for (const key in charactorDetails) {
+      let charactorInfo = document.createElement("p");
+      charactorInfo.innerText = `${key}: ${charactorDetails[key]}`;
+      charactorDetailsDiv.append(charactorInfo);
+    }
+
+    charactorDiv.append(charactorProfile, charactorDetailsDiv);
+
+    mainCharactorsDiv.append(charactorDiv);
+  }
+
+  let closeBtn = document.createElement("button");
+  closeBtn.innerText = "close";
+  mainCharactorsDiv.append(closeBtn);
+  closeBtn.addEventListener("click", () => {
+    mainCharactorsDiv.remove();
+    let modal = document.querySelector(".my-modal");
+    modal.remove();
+  });
+
+  return mainCharactorsDiv;
+}
+
+//Fetch people
+
+let getCharactorsInfo = (post) => {
+  let peopleUrl = post.peopleUrl;
+  return fetch(peopleUrl).then((peopleFromServer) => {
+    return peopleFromServer.json();
+  });
+};
 
 //FETCH USERS
 function getUserInfo() {
@@ -483,9 +572,9 @@ function createUserAccount(account) {
         id: null,
         name: null,
       };
-      // userAccountdivEl.classList.remove("active-user");
-      renderCards(state.posts);
       console.log("You just signed off");
+
+      renderCards(state.posts);
       renderUserAccounts(state.users);
       return;
     }
@@ -509,6 +598,7 @@ function createEditForm(post) {
   let editForm = document.createElement("form");
   editForm.className = "edit-form";
   let contentInput = document.createElement("textarea");
+  contentInput.setAttribute("id", "edit-textarea");
   contentInput.setAttribute("type", "text");
   contentInput.setAttribute("name", "contentEdit");
   contentInput.setAttribute("rows", "3");
@@ -533,8 +623,8 @@ function createEditForm(post) {
 
   editForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    // console.log(editForm.contentEdit.value);
-    if (contentInput.value === null) {
+    let textAreaText = document.getElementById("edit-textarea").value;
+    if (textAreaText === "") {
       alert(
         "content can not be empty, please choose discard or delete your journal"
       );
@@ -551,7 +641,6 @@ function createEditForm(post) {
       let updatePostToStateIndex = state.posts.findIndex(function (targetPost) {
         return targetPost.id === updatedPostFromServer.id;
       });
-
       state.posts[updatePostToStateIndex] = updatedPostFromServer;
       renderCards(state.posts);
       editForm.remove();
