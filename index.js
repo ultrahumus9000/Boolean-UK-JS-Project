@@ -434,7 +434,8 @@ function renderCard(post) {
 
   readMoreBtn.addEventListener("click", () => {
     getCharactorsInfo(post).then((allPeopleFromServer) => {
-      state.people = allPeopleFromServer;
+      console.log(allPeopleFromServer);
+      state.people = [...allPeopleFromServer];
       console.log(state.people);
       let filteredPeople = state.people.filter((peopleFromState) => {
         return peopleFromState.films[0].includes(post.orginalId);
