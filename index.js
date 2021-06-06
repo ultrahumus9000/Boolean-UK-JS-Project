@@ -434,11 +434,17 @@ function renderCard(post) {
         return;
       }
 
+      // state.posts = state.posts.filter(function (targetPost) {
+      //   return targetPost.id !== post.id;
+      // });
+
       let filteredPosts = state.posts.filter(function (targetPost) {
         return targetPost.id !== post.id;
       });
+
       setState({ posts: filteredPosts });
-      // renderCards(filteredPosts);
+
+      // renderCards(state.posts);
     });
   });
 
@@ -762,8 +768,7 @@ function renderCheckedGenreList() {
   });
   console.log(state);
   console.log(filteredPosts);
-  // state.posts = filteredPosts;
-  // setState({ posts: filteredPosts });
+
   renderCards(filteredPosts);
 }
 
@@ -781,16 +786,20 @@ function renderCheckbox() {
 
     checkboxInput.addEventListener("click", function () {
       if (checkboxInput.checked) {
-        state.checkedGenre.push(checkboxInput.value);
+        // state.checkedGenre.push(checkboxInput.value);
         console.log(state.checkedGenre);
+        setState({
+          checkedGenre: [...state.checkedGenre, checkboxInput.value],
+        });
         renderCheckedGenreList();
       } else {
         let uncheckedGenre = checkboxInput.value;
-        state.checkedGenre = state.checkedGenre.filter(function (targetGenre) {
+        let filterGenre = state.checkedGenre.filter(function (targetGenre) {
           return targetGenre !== uncheckedGenre;
         });
         // console.log(state.checkedGenre);
-        state.genre = [];
+        setState({ checkedGenre: filterGenre });
+
         renderCheckedGenreList();
         let checkNodelists = document.querySelectorAll(".checkbox");
         let checkStatusArray = [];
