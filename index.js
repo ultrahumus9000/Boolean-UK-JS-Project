@@ -1,4 +1,4 @@
-// 1 create header which includes the user account,
+// / 1 create header which includes the user account,
 // 2 create a filter and form on the aside
 // 3 render in the main section, in this way we only render main section which is easier to read
 
@@ -12,7 +12,7 @@ const mainRenderSection = document.querySelector(".main-render-section");
 const journaUlList = document.querySelector(".journal-Ul-List");
 const checkboxSection = document.querySelector(".checkbox-section");
 const accountDivision = document.querySelector(".user-accounts");
-console.log(accountDivision);
+const searchbarDiv = document.querySelector(".search-bar");
 
 //STATE:
 let state = {
@@ -26,6 +26,7 @@ let state = {
   },
   checkedGenre: [],
   currentMainCharactors: [],
+  search: "",
 };
 renderCheckbox();
 renderAside();
@@ -43,6 +44,50 @@ function renderAside() {
   getFilmInfo().then(function () {
     createForm(state.niceFilmsFromAPI);
   });
+}
+
+//searchbar
+let createSearchForm = () => {
+  let searchForm = document.createElement("form");
+  searchForm.className = "search-form";
+
+  let searchBarInput = document.createElement("input");
+
+  let searchBtn = document.createElement("button");
+  searchBtn.className = "search-button";
+
+  searchBtn.innerText = "Search";
+
+  searchForm.append(searchBarInput, searchBtn);
+
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let filteredPosts = state.posts.filter((singlePost) => {
+      return singlePost.animeInfo.title
+        .toLowerCase()
+        .includes(searchBarInput.value.toLowerCase());
+    });
+
+    console.log(state.posts);
+
+    if (filteredPosts.length === 0) {
+      // alert("no search result");
+      renderCards(filteredPosts);
+      return;
+    }
+
+    searchForm.reset();
+  });
+
+  searchbarDiv.append(searchForm);
+};
+
+createSearchForm();
+
+function setState(objectToChange) {
+  state = { ...state, ...objectToChange };
+  renderCards(state.posts);
 }
 
 //FILM DATA
@@ -97,8 +142,8 @@ function getPostsFromServer() {
 
 getPostsFromServer().then(function (posts) {
   state.posts = posts;
-  console.log(state.posts);
-  renderCards(posts);
+  // console.log(state.posts);
+  renderCards(state.posts);
 });
 
 //ASIDE FORM FUNCTION:
@@ -245,10 +290,11 @@ function createForm(films) {
     };
     console.log(newPost);
     postToServer(newPost).then(function (postFromServer) {
-      state.posts.push(postFromServer);
+      // state.posts.push(postFromServer);
       console.log(postFromServer);
       // renderCard(newPost);
-      renderCards(state.posts);
+      setState({ posts: [...state.posts, postFromServer] });
+      // renderCards(state.posts);
       formEl.reset();
     });
   });
@@ -288,7 +334,7 @@ function createForm(films) {
 
 function renderCards(posts) {
   journaUlList.innerHTML = "";
-  posts.map(renderCard);
+  posts.forEach(renderCard);
 }
 
 //   post this post to our own server
@@ -377,11 +423,22 @@ function renderCard(post) {
 
   deleteBTn.addEventListener("click", function () {
     deleteDatatoServer(post).then(function () {
+      console.log(state);
+      if (state.activeUser.id === null) {
+        alert("Sign in First");
+        return;
+      }
+
+      if (state.activeUser.id !== post.userId) {
+        alert("you are not the creator");
+        return;
+      }
+
       let filteredPosts = state.posts.filter(function (targetPost) {
         return targetPost.id !== post.id;
       });
-      state.posts = filteredPosts;
-      renderCards(state.posts);
+      setState({ posts: filteredPosts });
+      // renderCards(filteredPosts);
     });
   });
 
@@ -389,7 +446,7 @@ function renderCard(post) {
   editBTn.innerText = "Edit";
 
   editBTn.addEventListener("click", function () {
-    if (state.activeUser.id == null) {
+    if (state.activeUser.id === null) {
       alert("Sign in First");
       return;
     }
@@ -435,7 +492,12 @@ function renderCard(post) {
   readMoreBtn.addEventListener("click", () => {
     getCharactorsInfo(post).then((allPeopleFromServer) => {
       console.log(allPeopleFromServer);
-      state.people = [...allPeopleFromServer];
+      if (allPeopleFromServer.id !== undefined) {
+        alert("No available data from API");
+        return;
+      }
+      state.people = allPeopleFromServer;
+
       console.log(state.people);
       let filteredPeople = state.people.filter((peopleFromState) => {
         return peopleFromState.films[0].includes(post.orginalId);
@@ -629,6 +691,9 @@ function createEditForm(post) {
       alert(
         "content can not be empty, please choose discard or delete your journal"
       );
+      editForm.remove();
+      renderCards(state.posts);
+      return;
     }
 
     if (state.activeUser.id !== post.userId) {
@@ -636,14 +701,25 @@ function createEditForm(post) {
       alert("you are not the creator");
       return;
     }
+
     updateContentToServer(editForm, post).then(function (
       updatedPostFromServer
     ) {
-      let updatePostToStateIndex = state.posts.findIndex(function (targetPost) {
-        return targetPost.id === updatedPostFromServer.id;
+      // let updatePostToStateIndex = state.posts.findIndex(function (targetPost) {
+      //   return targetPost.id === updatedPostFromServer.id;
+      // });
+      // state.posts[updatePostToStateIndex] = updatedPostFromServer;
+
+      let filteredPosts = state.posts.map(function (targetPost) {
+        if (targetPost.id === updatedPostFromServer.id) {
+          targetPost = { ...targetPost, content: textAreaText };
+        }
+        return targetPost;
       });
-      state.posts[updatePostToStateIndex] = updatedPostFromServer;
-      renderCards(state.posts);
+
+      setState({ posts: filteredPosts });
+
+      // renderCards(state.posts);
       editForm.remove();
     });
   });
@@ -686,6 +762,8 @@ function renderCheckedGenreList() {
   });
   console.log(state);
   console.log(filteredPosts);
+  // state.posts = filteredPosts;
+  // setState({ posts: filteredPosts });
   renderCards(filteredPosts);
 }
 
@@ -704,7 +782,7 @@ function renderCheckbox() {
     checkboxInput.addEventListener("click", function () {
       if (checkboxInput.checked) {
         state.checkedGenre.push(checkboxInput.value);
-        // console.log(state.checkedGenre);
+        console.log(state.checkedGenre);
         renderCheckedGenreList();
       } else {
         let uncheckedGenre = checkboxInput.value;
@@ -724,6 +802,7 @@ function renderCheckbox() {
         // console.log(checkStatusArray);
         if (!checkStatusArray.includes(true)) {
           renderCards(state.posts);
+          // setState({ posts: filteredPosts });
         }
       }
     });
@@ -740,6 +819,10 @@ function renderCheckbox() {
     for (const checkboxInList of checkNodelists) {
       checkboxInList.checked = false;
     }
-    renderCards(state.posts);
+    state.search = "";
+    getPostsFromServer().then(function (postSFromServer) {
+      state.posts = postSFromServer;
+      renderCards(state.posts);
+    });
   });
 }
