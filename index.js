@@ -60,23 +60,23 @@ let createSearchForm = () => {
 
   searchForm.append(searchBarInput, searchBtn);
 
-  searchForm.addEventListener("input", (e) => {
+  searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
+    // state.search = searchBarInput.value.toLowerCase();
+    setState({ search: searchBarInput.value.toLowerCase() });
     let filteredPosts = state.posts.filter((singlePost) => {
-      return singlePost.animeInfo.title
-        .toLowerCase()
-        .includes(searchBarInput.value.toLowerCase());
+      return singlePost.animeInfo.title.toLowerCase().includes(state.search);
     });
 
     console.log(state.posts);
+    console.log(filteredPosts);
 
     if (filteredPosts.length === 0) {
       // alert("no search result");
       renderCards(filteredPosts);
       return;
     }
-
+    renderCards(filteredPosts);
     searchForm.reset();
   });
 
