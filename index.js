@@ -60,7 +60,7 @@ let createSearchForm = () => {
 
   searchForm.append(searchBarInput, searchBtn);
 
-  searchForm.addEventListener("submit", (e) => {
+  searchForm.addEventListener("input", (e) => {
     e.preventDefault();
 
     let filteredPosts = state.posts.filter((singlePost) => {

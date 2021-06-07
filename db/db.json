@@ -11,12 +11,29 @@
   ],
   "posts": [
     {
-      "orginalId": "2baf70d1-42bb-4437-b551-e5fed5a87abe",
+      "orginalId": "ff24da26-a969-4f0e-ba1e-a122ead6c6e3",
       "userId": 1,
       "userName": "Valentina",
-      "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMSEhUTEhMVFRUXGBUVFxgVFxUVFRcVFxcYFxcVFRUYHSggGRolGxYYITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGi0lHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAQwAvAMBIgACEQEDEQH/xAAbAAACAwEBAQAAAAAAAAAAAAADBAIFBgEHAP/EAEUQAAIBAgQDBQUEBwUHBQAAAAECAwARBBIhMQVBUQYTImFxMoGRobFCYsHRFCNScpLh8AcVM4KiFiRDU3OywjRjg5Oj/8QAGgEAAwEBAQEAAAAAAAAAAAAAAQIDAAQFBv/EADMRAAICAQMCAwcEAQQDAAAAAAABAhEDEiExBEFRYXEFEyKRobHwMoHB0UIzkuHxFCOC/9oADAMBAAIRAxEAPwDBFKiEorV8BXoHz+ohkoqxXqSpTcENMkI5CyQUwmHpnuqIqUQbgVw9FWGmY470VYda1h02JmGuiLyqwbD1wQa0bBoYuYtKgY6fljoQirWZxFlirvdU33VDkFFMzQm8QoLwCnstRZKYnRWtBQ2hp946E60dhLaEmipdoqfdaCwoSQ8ZMUMNQMYphqG1SoqpMXYVG1EcVC1IyqYzapolfKtNxR0xNI7FDTcaVxFphBRQaOZKkkddy0eNKDMSgjptY6jh4qdw0WtqRyKxVi5jqSxVaDCVMYTSk94iqxMpHiNEXD2FWi4PmaBiEtTKfgK8dK2Vkq0q6U66UFozTqRB7imSuiKm+5oEhp1IGhIWlAFLOKadL0EpT3RFxYq60J1plxQJRQbMkJyCgkUeWhNSsZAHqNSeoZqmWRZotNwiloxrTiLWGoMgogFBWjqKIAyJTUMdU+K44sEio6kA2ObS2umg308602Eizaj1qetO14FlgmkpNbP8/LqxnC4XnT4gH",
+      "image": "https://images2.alphacoders.com/103/thumb-350-1031480.jpg",
       "genre": "Romance",
-      "content": "当初v·在甚嚣尘上v的创造性",
+      "content": "dfgdgfdgfdfgfcv",
+      "rating": "1",
+      "peopleUrl": "https://ghibliapi.herokuapp.com/people/",
+      "animeInfo": {
+        "title": "Whisper of the Heart",
+        "originalTitle": "耳をすませば",
+        "director": "Yoshifumi Kondō",
+        "description": "Shizuku lives a simple life, dominated by her love for stories and writing. One day she notices that all the library books she has have been previously checked out by the same person: 'Seiji Amasawa'. Curious as to who he is, Shizuku meets a boy her age whom she finds infuriating, but discovers to her shock that he is her 'Prince of Books'. As she grows closer to him, she realises that he merely read all those books to bring himself closer to her. The boy Seiji aspires to be a violin maker in Italy, and it is his dreams that make Shizuku realise that she has no clear path for her life. Knowing that her strength lies in writing, she tests her talents by writing a story about Baron, a cat statuette belonging to Seiji's grandfather."
+      },
+      "id": 1
+    },
+    {
+      "orginalId": "2baf70d1-42bb-4437-b551-e5fed5a87abe",
+      "userId": 2,
+      "userName": "Linlin",
+      "image": "https://images2.alphacoders.com/103/thumb-350-1031480.jpg",
+      "genre": "Romance",
+      "content": "szjdjhaghgdsah",
       "rating": "1",
       "peopleUrl": "https://ghibliapi.herokuapp.com/people/",
       "animeInfo": {
@@ -25,7 +42,7 @@
         "director": "Hayao Miyazaki",
         "description": "The orphan Sheeta inherited a mysterious crystal that links her to the mythical sky-kingdom of Laputa. With the help of resourceful Pazu and a rollicking band of sky pirates, she makes her way to the ruins of the once-great civilization. Sheeta and Pazu must outwit the evil Muska, who plans to use Laputa's science to make himself ruler of the world."
       },
-      "id": 3
+      "id": 2
     }
   ]
 }
