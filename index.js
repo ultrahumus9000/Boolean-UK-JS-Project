@@ -52,6 +52,7 @@ let createSearchForm = () => {
   searchForm.className = "search-form";
 
   let searchBarInput = document.createElement("input");
+  searchBarInput.setAttribute("id", "searchinput");
 
   let searchBtn = document.createElement("button");
   searchBtn.className = "search-button";
@@ -60,10 +61,10 @@ let createSearchForm = () => {
 
   searchForm.append(searchBarInput, searchBtn);
 
-  searchForm.addEventListener("submit", (e) => {
+  searchForm.addEventListener("input", (e) => {
     e.preventDefault();
     // state.search = searchBarInput.value.toLowerCase();
-    setState({ search: searchBarInput.value.toLowerCase() });
+    setState({ search: searchForm["searchinput"].value.toLowerCase() });
     let filteredPosts = state.posts.filter((singlePost) => {
       return singlePost.animeInfo.title.toLowerCase().includes(state.search);
     });
