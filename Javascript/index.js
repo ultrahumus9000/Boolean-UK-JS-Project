@@ -78,7 +78,7 @@ let createSearchForm = () => {
       return;
     }
     renderCards(filteredPosts);
-    searchForm.reset();
+    // searchForm.reset();
   });
 
   searchbarDiv.append(searchForm);

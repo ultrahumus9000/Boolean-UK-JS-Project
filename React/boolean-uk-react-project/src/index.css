@@ -1,0 +1,27 @@
+* {
+  font-family: sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+.mode {
+  border: none;
+  color: black;
+  background: linear-gradient(45deg, lightblue, lightpink);
+  padding: 5px 30px;
+  font-size: 1.5rem;
+  border-radius: 5px;
+  border: 2px solid black;
+}
+aside .Dark {
+  color: white;
+  background: teal;
+}
+.App {
+  height: 100vh;
+  background: lightpink;
+  padding: 30px;
+}
+
+.App .Dark {
+  background-image: url();
+}
